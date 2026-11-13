@@ -1,0 +1,43 @@
+// Copyright 2023 Undistro Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package printers
+
+import (
+	"io"
+
+	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/tw"
+
+	"github.com/undistro/marvin/pkg/types"
+)
+
+// MarkdownPrinter implements a Printer that prints the report in Markdown format
+type MarkdownPrinter struct{}
+
+func (*MarkdownPrinter) PrintObj(report types.Report, w io.Writer) error {
+	t := tablewriter.NewTable(w,
+		tablewriter.WithRowAutoWrap(tw.WrapNone),
+		tablewriter.WithHeaderAlignment(tw.AlignLeft),
+		tablewriter.WithRowAlignment(tw.AlignLeft),
+		tablewriter.WithRendition(tw.Rendition{
+			Borders: tw.Border{Left: tw.On, Right: tw.On, Top: tw.Off, Bottom: tw.Off},
+			Symbols: tw.NewSymbols(tw.StyleMarkdown),
+		}),
+	)
+	defer func() { _ = t.Close() }()
+
+	renderTable(report, t)
+	return nil
+}

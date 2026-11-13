@@ -1,0 +1,27 @@
+name: test
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v7
+
+      - name: setup go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+
+      - name: test
+        run: make test
+
+      - name: build
+        run: make build
+
+      - name: check license headers
+        run: make checklicense
